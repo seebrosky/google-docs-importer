@@ -21,6 +21,9 @@ defined( 'ABSPATH' ) || exit;
         $imported_post_id    = absint( $_GET['imported_post_id'] );
         $imported_post_title = get_the_title( $imported_post_id );
         $edit_link           = get_edit_post_link( $imported_post_id, 'raw' );
+        $edit_label          = 'page' === get_post_type( $imported_post_id )
+            ? 'Edit Page'
+            : 'Edit Post';    
         ?>
         <div class="notice notice-success is-dismissible">
             <p>
@@ -36,7 +39,9 @@ defined( 'ABSPATH' ) || exit;
                 echo esc_html( $message );
                 ?>
                 <?php if ( ! empty( $edit_link ) ) : ?>
-                    <a href="<?php echo esc_url( $edit_link ); ?>" target="_blank" rel="noopener noreferrer">Edit Post</a>
+                    <a href="<?php echo esc_url( $edit_link ); ?>" target="_blank" rel="noopener noreferrer">
+                        <?php echo esc_html( $edit_label ); ?>
+                    </a>
                 <?php endif; ?>
             </p>
         </div>
