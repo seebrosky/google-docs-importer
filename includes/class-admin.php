@@ -13,9 +13,25 @@ class GDI_Admin {
         add_action( 'admin_init', [ $auth, 'handle_callback' ] );
         add_action( 'admin_init', [ $this, 'handle_form_actions' ] );
 
+        add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+
         add_action( 'update_option_gdi_client_id', [ $auth, 'clear_tokens_on_credential_change' ], 10, 2 );
         add_action( 'update_option_gdi_client_secret', [ $auth, 'clear_tokens_on_credential_change' ], 10, 2 );
     }
+
+    public function enqueue_assets( $hook ) {
+
+        if ( 'tools_page_docs-importer' !== $hook ) {
+            return;
+        }
+
+        wp_enqueue_style(
+            'gdi-admin',
+            GDI_URL . 'assets/css/admin.css',
+            [],
+            GDI_VERSION
+        );
+    }    
 
     public function register_menu() {
         add_management_page(

@@ -1,0 +1,27 @@
+/* Buttons */
+.gdi-button-danger {
+    background: #d63638 !important;
+    border-color: #d63638 !important;
+    color: #fff !important;
+    text-decoration: none;
+    box-shadow: none;
+}
+
+.gdi-button-danger:hover,
+.gdi-button-danger:focus {
+    background: #b32d2e !important;
+    border-color: #b32d2e !important;
+    color: #fff !important;
+}
+
+/* Search Form */
+.gdi-search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 660px;
+}
+
+.gdi-search-form input {
+    margin: 0;
+}

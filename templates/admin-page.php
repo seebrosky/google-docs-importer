@@ -67,7 +67,7 @@ defined( 'ABSPATH' ) || exit;
 
                 <p><label for="gdi_doc_search">Search by document title</label></p>
 
-                <div style="display:flex; align-items:center; gap:8px; max-width:560px;">
+                <div class="gdi-search-form">
                     <input
                         type="text"
                         id="gdi_doc_search"
@@ -75,10 +75,21 @@ defined( 'ABSPATH' ) || exit;
                         class="regular-text"
                         placeholder="Example: sample article"
                         value="<?php echo esc_attr( $search_query ); ?>"
-                        style="margin:0;"
                     >
+                    <?php
+                        submit_button(
+                            'Search Docs',
+                            'primary',
+                            'submit',
+                            false
+                        );
+                    ?>
 
-                    <?php submit_button( 'Search Docs', 'secondary', 'submit', false, [ 'style' => 'margin:0;' ] ); ?>
+                    <?php if ( ! empty( $search_query ) ) : ?>
+                        <a href="<?php echo esc_url( $import_tab_url ); ?>" class="button gdi-button-danger">
+                            Clear Search
+                        </a>
+                    <?php endif; ?>
                 </div>
             </form>
 
