@@ -1,0 +1,79 @@
+<?php
+
+defined( 'ABSPATH' ) || exit;
+
+class GDI_Google_Docs {
+
+    public function search( $query ) {
+        $auth         = new GDI_Google_Auth();
+        $access_token = $auth->get_access_token();
+
+        if ( empty( $access_token ) ) {
+            return new WP_Error( 'not_connected', 'Google is not connected.' );
+        }
+
+        $drive_query = sprintf(
+            "mimeType='application/vnd.google-apps.document' and name contains '%s' and trashed=false",
+            str_replace( "'", "\\'", $query )
+        );
+
+        $url = add_query_arg(
+            [
+                'q'        => $drive_query,
+                'fields'   => 'files(id,name,webViewLink,modifiedTime)',
+                'pageSize' => 10,
+            ],
+            'https://www.googleapis.com/drive/v3/files'
+        );
+
+        $response = wp_remote_get(
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $access_token,
+                ],
+            ]
+        );
+
+        if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        return ! empty( $body['files'] ) ? $body['files'] : [];
+    }
+
+    public function fetch( $document_id ) {
+        $auth         = new GDI_Google_Auth();
+        $access_token = $auth->get_access_token();
+
+        if ( empty( $access_token ) ) {
+            return new WP_Error( 'not_connected', 'Google is not connected.' );
+        }
+
+        $response = wp_remote_get(
+            sprintf(
+                'https://docs.googleapis.com/v1/documents/%s',
+                rawurlencode( $document_id )
+            ),
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $access_token,
+                ],
+            ]
+        );
+
+        if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        $body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+        if ( empty( $body['body']['content'] ) ) {
+            return new WP_Error( 'empty_doc', 'No document content found.' );
+        }
+
+        return $body;
+    }
+}
