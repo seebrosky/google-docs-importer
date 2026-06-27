@@ -2,5 +2,6 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/chrisbr1/public_html/emerald.chrisbrosky.com/wp-content/plugins/google-docs-importer/
+    - /bin/rm -rf $DEPLOYPATH
     - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R * $DEPLOYPATH
