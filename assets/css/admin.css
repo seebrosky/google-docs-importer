@@ -1,4 +1,26 @@
-/* Buttons */
+/**
+ * --------------------------------------------------------------------------
+ * Search Form
+ * --------------------------------------------------------------------------
+ */
+
+.gdi-search-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 660px;
+}
+
+.gdi-search-form input {
+    margin: 0;
+}
+
+/**
+ * --------------------------------------------------------------------------
+ * Buttons
+ * --------------------------------------------------------------------------
+ */
+
 .gdi-button-danger {
     background: #d63638 !important;
     border-color: #d63638 !important;
@@ -14,27 +36,11 @@
     color: #fff !important;
 }
 
-/* Search Form */
-.gdi-search-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    max-width: 660px;
-}
-
-.gdi-search-form input {
-    margin: 0;
-}
-
-.gdi-status-imported {
-    color: #008a20;
-    font-weight: 600;
-}
-
-.gdi-status-new {
-    color: #2271b1;
-    font-weight: 600;
-}
+/**
+ * --------------------------------------------------------------------------
+ * Status Indicators
+ * --------------------------------------------------------------------------
+ */
 
 .gdi-status-panel {
     margin-top: 20px;
@@ -49,6 +55,22 @@
     margin-bottom: 2px;
     vertical-align: middle;
 }
+
+.gdi-status-imported {
+    color: #008a20;
+    font-weight: 600;
+}
+
+.gdi-status-new {
+    color: #2271b1;
+    font-weight: 600;
+}
+
+/**
+ * --------------------------------------------------------------------------
+ * Utility Classes
+ * --------------------------------------------------------------------------
+ */
 
 .gdi-inline-form {
     display: inline;
