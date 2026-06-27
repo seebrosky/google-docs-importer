@@ -24,9 +24,19 @@ defined( 'ABSPATH' ) || exit;
         ?>
         <div class="notice notice-success is-dismissible">
             <p>
-                <?php echo esc_html( sprintf( 'Imported "%s" as a draft.', $imported_post_title ) ); ?>
+                <?php
+                $gdi_action = isset( $_GET['gdi_action'] )
+                    ? sanitize_key( wp_unslash( $_GET['gdi_action'] ) )
+                    : 'imported';
+
+                $message = 'updated' === $gdi_action
+                    ? sprintf( 'Updated "%s".', $imported_post_title )
+                    : sprintf( 'Imported "%s" as a draft.', $imported_post_title );
+
+                echo esc_html( $message );
+                ?>
                 <?php if ( ! empty( $edit_link ) ) : ?>
-                    <a href="<?php echo esc_url( $edit_link ); ?>">Edit Post</a>
+                    <a href="<?php echo esc_url( $edit_link ); ?>" target="_blank" rel="noopener noreferrer">Edit Post</a>
                 <?php endif; ?>
             </p>
         </div>
@@ -40,9 +50,9 @@ defined( 'ABSPATH' ) || exit;
 
     <?php if ( 'import' === $active_tab ) : ?>
 
-        <div style="margin-top: 20px;">
+        <div class="gdi-status-panel">
             <p>
-                <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:<?php echo esc_attr( $status_color ); ?>;margin-right:8px;margin-bottom:2px;vertical-align:middle;"></span>
+                <span class="gdi-status-dot" style="background:<?php echo esc_attr( $status_color ); ?>;"></span>
                 <strong><?php echo esc_html( $status_text ); ?></strong>
             </p>
 
@@ -109,11 +119,25 @@ defined( 'ABSPATH' ) || exit;
                         <tr>
                             <th>Document</th>
                             <th>Modified</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php
+                        $importer = new GDI_Importer();
+                        ?>
+
                         <?php foreach ( $search_results as $doc ) : ?>
+                            <?php
+                            $existing_post_id = ! empty( $doc['id'] )
+                                ? $importer->get_post_id_by_document_id( $doc['id'] )
+                                : 0;
+
+                            $edit_post_link = $existing_post_id
+                                ? get_edit_post_link( $existing_post_id, 'raw' )
+                                : '';
+                            ?>
                             <tr>
                                 <td><?php echo esc_html( $doc['name'] ?? '' ); ?></td>
                                 <td>
@@ -128,18 +152,37 @@ defined( 'ABSPATH' ) || exit;
                                     }
                                     ?>
                                 </td>
+
                                 <td>
-                                    <form method="post" style="display:inline;">
+                                    <?php if ( $existing_post_id ) : ?>
+                                        <span class="gdi-status-imported">✓ Imported</span>
+                                    <?php else : ?>
+                                        <span class="gdi-status-new">New</span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <td>
+                                    <form method="post" class="gdi-inline-form">
                                         <?php wp_nonce_field( 'gdi_import_doc', 'gdi_import_nonce' ); ?>
 
                                         <input type="hidden" name="gdi_import_doc_id" value="<?php echo esc_attr( $doc['id'] ?? '' ); ?>">
                                         <input type="hidden" name="gdi_return_search" value="<?php echo esc_attr( $search_query ); ?>">
 
-                                        <button type="submit" class="button button-primary">Import</button>
+                                        <button type="submit" class="button button-primary">
+                                            <?php echo $existing_post_id ? 'Update' : 'Import'; ?>
+                                        </button>
                                     </form>
 
+                                    <?php if ( ! empty( $edit_post_link ) ) : ?>
+                                        <a href="<?php echo esc_url( $edit_post_link ); ?>" target="_blank" rel="noopener noreferrer" class="button">
+                                            Edit Post
+                                        </a>
+                                    <?php endif; ?>
+
                                     <?php if ( ! empty( $doc['webViewLink'] ) ) : ?>
-                                        <a href="<?php echo esc_url( $doc['webViewLink'] ); ?>" target="_blank" rel="noopener noreferrer" class="button">Open Doc</a>
+                                        <a href="<?php echo esc_url( $doc['webViewLink'] ); ?>" target="_blank" rel="noopener noreferrer" class="button">
+                                            Open Doc
+                                        </a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -154,7 +197,7 @@ defined( 'ABSPATH' ) || exit;
 
     <?php if ( 'settings' === $active_tab ) : ?>
 
-        <div style="margin-top: 20px;">
+        <div class="gdi-status-panel">
             <h2>Settings</h2>
 
             <form method="post" action="options.php">
@@ -184,7 +227,7 @@ defined( 'ABSPATH' ) || exit;
             <h2>Google Connection</h2>
 
             <p>
-                <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:<?php echo esc_attr( $status_color ); ?>;margin-right:8px;margin-bottom:2px;vertical-align:middle;"></span>
+                <span class="gdi-status-dot" style="background:<?php echo esc_attr( $status_color ); ?>;"></span>
                 <strong><?php echo esc_html( $status_text ); ?></strong>
             </p>
 

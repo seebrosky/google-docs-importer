@@ -90,14 +90,14 @@ class GDI_Admin {
                 : '';
 
             $importer = new GDI_Importer();
-            $post_id  = $importer->import( $document_id );
+            $result   = $importer->import( $document_id );
 
-            if ( is_wp_error( $post_id ) ) {
+            if ( is_wp_error( $result ) ) {
                 wp_safe_redirect(
                     add_query_arg(
                         [
                             'tab'              => 'import',
-                            'gdi_import_error' => rawurlencode( $post_id->get_error_message() ),
+                            'gdi_import_error' => rawurlencode( $result->get_error_message() ),
                             'gdi_search'       => rawurlencode( $return_search ),
                         ],
                         admin_url( 'tools.php?page=docs-importer' )
@@ -110,7 +110,8 @@ class GDI_Admin {
                 add_query_arg(
                     [
                         'tab'              => 'import',
-                        'imported_post_id' => absint( $post_id ),
+                        'imported_post_id' => absint( $result['post_id'] ?? 0 ),
+                        'gdi_action'       => sanitize_key( $result['action'] ?? 'imported' ),
                         'gdi_search'       => rawurlencode( $return_search ),
                     ],
                     admin_url( 'tools.php?page=docs-importer' )
