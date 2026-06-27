@@ -15,6 +15,24 @@
     margin: 0;
 }
 
+.gdi-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.gdi-actions .button,
+.gdi-actions select {
+    min-width: 96px;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.gdi-actions select {
+    padding: 0 8px;
+}
+
 /**
  * --------------------------------------------------------------------------
  * Buttons
@@ -63,6 +81,11 @@
 
 .gdi-status-new {
     color: #2271b1;
+    font-weight: 600;
+}
+
+.gdi-status-update {
+    color: #b26200;
     font-weight: 600;
 }
 

@@ -117,9 +117,10 @@ defined( 'ABSPATH' ) || exit;
                 <table class="widefat striped">
                     <thead>
                         <tr>
-                            <th>Document</th>
+                            <th>Document Title</th>
                             <th>Modified</th>
                             <th>Status</th>
+                            <th>Type</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -137,6 +138,18 @@ defined( 'ABSPATH' ) || exit;
                             $edit_post_link = $existing_post_id
                                 ? get_edit_post_link( $existing_post_id, 'raw' )
                                 : '';
+
+                            $existing_post_type = $existing_post_id
+                                ? get_post_type( $existing_post_id )
+                                : '';
+
+                            $edit_label = 'page' === $existing_post_type
+                                ? 'Edit Page'
+                                : 'Edit Post';                                
+
+                            $update_available = $existing_post_id && ! empty( $doc['id'] )
+                                ? $importer->is_update_available( $existing_post_id, $doc['id'] )
+                                : false;                                
                             ?>
                             <tr>
                                 <td><?php echo esc_html( $doc['name'] ?? '' ); ?></td>
@@ -154,15 +167,40 @@ defined( 'ABSPATH' ) || exit;
                                 </td>
 
                                 <td>
-                                    <?php if ( $existing_post_id ) : ?>
-                                        <span class="gdi-status-imported">✓ Imported</span>
+                                    <?php if ( $update_available ) : ?>
+                                        <span class="gdi-status-update">● Update Available</span>
+                                    <?php elseif ( $existing_post_id ) : ?>
+                                        <span class="gdi-status-imported">✓ Up to Date</span>
                                     <?php else : ?>
-                                        <span class="gdi-status-new">New</span>
+                                        <span class="gdi-status-new">● Ready to Import</span>
                                     <?php endif; ?>
                                 </td>
 
                                 <td>
-                                    <form method="post" class="gdi-inline-form">
+                                    <?php if ( ! $existing_post_id ) : ?>
+
+                                        <label class="screen-reader-text" for="gdi_post_type_<?php echo esc_attr( $doc['id'] ?? '' ); ?>">
+                                            Import as
+                                        </label>
+
+                                        <select
+                                            id="gdi_post_type_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
+                                            name="gdi_post_type"
+                                            form="gdi_import_form_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
+                                        >
+                                            <option value="post">Post</option>
+                                            <option value="page">Page</option>
+                                        </select>
+
+                                    <?php else : ?>
+
+                                        <?php echo esc_html( 'page' === $existing_post_type ? 'Page' : 'Post' ); ?>
+
+                                    <?php endif; ?>
+                                </td>                                
+
+                                <td class="gdi-actions">
+                                    <form id="gdi_import_form_<?php echo esc_attr( $doc['id'] ?? '' ); ?>" method="post" class="gdi-inline-form">
                                         <?php wp_nonce_field( 'gdi_import_doc', 'gdi_import_nonce' ); ?>
 
                                         <input type="hidden" name="gdi_import_doc_id" value="<?php echo esc_attr( $doc['id'] ?? '' ); ?>">
@@ -175,7 +213,7 @@ defined( 'ABSPATH' ) || exit;
 
                                     <?php if ( ! empty( $edit_post_link ) ) : ?>
                                         <a href="<?php echo esc_url( $edit_post_link ); ?>" target="_blank" rel="noopener noreferrer" class="button">
-                                            Edit Post
+                                            <?php echo esc_html( $edit_label ); ?>
                                         </a>
                                     <?php endif; ?>
 

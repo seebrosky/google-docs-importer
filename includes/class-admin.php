@@ -88,9 +88,13 @@ class GDI_Admin {
             $return_search = isset( $_POST['gdi_return_search'] )
                 ? sanitize_text_field( wp_unslash( $_POST['gdi_return_search'] ) )
                 : '';
+            $post_type = isset( $_POST['gdi_post_type'] )
+                ? sanitize_key( wp_unslash( $_POST['gdi_post_type'] ) )
+                : 'post';
 
-            $importer = new GDI_Importer();
-            $result   = $importer->import( $document_id );
+            $post_type = in_array( $post_type, [ 'post', 'page' ], true ) ? $post_type : 'post';
+            $importer  = new GDI_Importer();
+            $result    = $importer->import( $document_id, $post_type );
 
             if ( is_wp_error( $result ) ) {
                 wp_safe_redirect(

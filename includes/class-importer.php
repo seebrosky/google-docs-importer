@@ -6,8 +6,9 @@ class GDI_Importer {
 
     const GOOGLE_DOC_ID_META_KEY = '_gdi_google_doc_id';
     const LAST_IMPORTED_META_KEY = '_gdi_last_imported_at';
+    const CONTENT_HASH_META_KEY  = '_gdi_content_hash';
 
-    public function import( $document_id ) {
+    public function import( $document_id, $post_type = 'post' ) {
         $google_docs = new GDI_Google_Docs();
         $doc         = $google_docs->fetch( $document_id );
 
@@ -15,8 +16,9 @@ class GDI_Importer {
             return $doc;
         }
 
-        $converter = new GDI_Gutenberg_Converter();
-        $content   = $converter->convert( $doc );
+        $converter    = new GDI_Gutenberg_Converter();
+        $content      = $converter->convert( $doc );
+        $content_hash = md5( $content );
 
         $existing_post_id = $this->get_post_id_by_document_id( $document_id );
 
@@ -35,6 +37,7 @@ class GDI_Importer {
             }
 
             update_post_meta( $post_id, self::LAST_IMPORTED_META_KEY, time() );
+            update_post_meta( $post_id, self::CONTENT_HASH_META_KEY, $content_hash );
 
             return [
                 'post_id' => absint( $post_id ),
@@ -42,12 +45,14 @@ class GDI_Importer {
             ];
         }
 
+        $post_type = in_array( $post_type, [ 'post', 'page' ], true ) ? $post_type : 'post';
+
         $post_id = wp_insert_post(
             [
                 'post_title'   => sanitize_text_field( $doc['title'] ?? 'Imported Google Doc' ),
                 'post_content' => $content,
                 'post_status'  => 'draft',
-                'post_type'    => 'post',
+                'post_type'    => $post_type,
             ],
             true
         );
@@ -58,6 +63,7 @@ class GDI_Importer {
 
         update_post_meta( $post_id, self::GOOGLE_DOC_ID_META_KEY, sanitize_text_field( $document_id ) );
         update_post_meta( $post_id, self::LAST_IMPORTED_META_KEY, time() );
+        update_post_meta( $post_id, self::CONTENT_HASH_META_KEY, $content_hash );
 
         return [
             'post_id' => absint( $post_id ),
@@ -83,4 +89,33 @@ class GDI_Importer {
 
         return ! empty( $query->posts ) ? absint( $query->posts[0] ) : 0;
     }
+
+    public function get_last_imported_at( $post_id ) {
+        return (int) get_post_meta( $post_id, self::LAST_IMPORTED_META_KEY, true );
+    }
+
+    public function is_update_available( $post_id, $document_id ) {
+        if ( empty( $post_id ) || empty( $document_id ) ) {
+            return false;
+        }
+
+        $saved_hash = get_post_meta( $post_id, self::CONTENT_HASH_META_KEY, true );
+
+        if ( empty( $saved_hash ) ) {
+            return true;
+        }
+
+        $google_docs = new GDI_Google_Docs();
+        $doc         = $google_docs->fetch( $document_id );
+
+        if ( is_wp_error( $doc ) ) {
+            return false;
+        }
+
+        $converter    = new GDI_Gutenberg_Converter();
+        $content      = $converter->convert( $doc );
+        $current_hash = md5( $content );
+
+        return $current_hash !== $saved_hash;
+    }  
 }
