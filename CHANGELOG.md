@@ -1,3 +1,14 @@
+## [1.0.0] - 2026-06-28
+
+### Added
+- Import ordered Google Docs lists as native Gutenberg ordered lists.
+- Preserve nested ordered and unordered list structures during import.
+- Preserve Google Docs list hierarchy using native nested Gutenberg lists.
+
+### Improved
+- Enhanced list conversion to detect Google Docs list types and nesting levels.
+- Improved content fidelity for complex documents containing mixed ordered and unordered lists.
+
 ## [0.9.0] - 2026-06-28
 
 ### Added

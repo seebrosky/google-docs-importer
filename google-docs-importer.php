@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Google Docs Importer
  * Description: Import Google Docs directly into WordPress as Gutenberg blocks.
- * Version: 0.9.0
+ * Version: 1.0.0
  * Author: Chris Brosky
  * Requires at least: 6.8
  * Requires PHP: 8.1
@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'GDI_VERSION', '0.9.0' );
+define( 'GDI_VERSION', '1.0.0' );
 define( 'GDI_PATH', plugin_dir_path( __FILE__ ) );
 define( 'GDI_URL', plugin_dir_url( __FILE__ ) );
 

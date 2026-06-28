@@ -10,7 +10,7 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 - Update previously imported documents
 - Detect content changes before updating
 - Convert Google Docs into native Gutenberg blocks
-- Preserve Google Docs headings, paragraphs, bulleted lists, tables, hyperlinks, and rich text formatting
+- Preserve Google Docs headings, paragraphs, bulleted lists, ordered lists, nested lists, tables, hyperlinks, and rich text formatting
 - Preserve bold, italic, underline, and strikethrough formatting
 - Import inline images into the WordPress Media Library
 - Prevent duplicate media uploads using Google image IDs and SHA-256 file hashes
@@ -40,13 +40,13 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 
 Planned features include:
 
-- Ordered list support
-- Nested list support
 - Blockquote support
 - Horizontal rule support
 - Image captions and improved alt text support
 - Scheduled document synchronization
 - Bulk document synchronization
+- Footnotes
+- Comments and suggestions support
 
 ## Changelog
 
