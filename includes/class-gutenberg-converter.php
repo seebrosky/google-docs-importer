@@ -233,19 +233,24 @@ class GDI_Gutenberg_Converter {
             return '';
         }
 
+        $rows           = $table['tableRows'];
+        $has_header_row = $this->is_table_header_row( $rows[0] );
+
         $html  = "<!-- wp:table -->\n";
-        $html .= "<figure class=\"wp-block-table\"><table><tbody>\n";
+        $html .= "<figure class=\"wp-block-table\"><table>\n";
 
-        foreach ( $table['tableRows'] as $row ) {
-            $html .= "<tr>\n";
+        if ( $has_header_row ) {
+            $html .= "<thead>\n";
+            $html .= $this->get_table_row_html( $rows[0], 'th' );
+            $html .= "</thead>\n";
 
-            foreach ( $row['tableCells'] ?? [] as $cell ) {
-                $cell_text = $this->get_table_cell_html( $cell );
+            $rows = array_slice( $rows, 1 );
+        }
 
-                $html .= '<td>' . wp_kses_post( $cell_text ) . "</td>\n";
-            }
+        $html .= "<tbody>\n";
 
-            $html .= "</tr>\n";
+        foreach ( $rows as $row ) {
+            $html .= $this->get_table_row_html( $row, 'td' );
         }
 
         $html .= "</tbody></table></figure>\n";
@@ -253,6 +258,50 @@ class GDI_Gutenberg_Converter {
 
         return $html;
     }
+
+    private function get_table_row_html( array $row, $cell_tag = 'td' ) {
+        $cell_tag = in_array( $cell_tag, [ 'td', 'th' ], true ) ? $cell_tag : 'td';
+
+        $html = "<tr>\n";
+
+        foreach ( $row['tableCells'] ?? [] as $cell ) {
+            $cell_text = $this->get_table_cell_html( $cell );
+
+            $html .= '<' . $cell_tag . '>' . wp_kses_post( $cell_text ) . '</' . $cell_tag . ">\n";
+        }
+
+        $html .= "</tr>\n";
+
+        return $html;
+    }
+
+    private function is_table_header_row( array $row ) {
+        $cells = $row['tableCells'] ?? [];
+
+        if ( empty( $cells ) ) {
+            return false;
+        }
+
+        foreach ( $cells as $cell ) {
+            if ( ! $this->cell_has_bold_text( $cell ) ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function cell_has_bold_text( array $cell ) {
+        foreach ( $cell['content'] ?? [] as $item ) {
+            foreach ( $item['paragraph']['elements'] ?? [] as $element ) {
+                if ( ! empty( $element['textRun']['content'] ) ) {
+                    return ! empty( $element['textRun']['textStyle']['bold'] );
+                }
+            }
+        }
+
+        return false;
+    }    
 
     private function get_table_cell_html( array $cell ) {
         $content = '';
