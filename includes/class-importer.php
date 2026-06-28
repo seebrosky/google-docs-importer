@@ -16,11 +16,11 @@ class GDI_Importer {
             return $doc;
         }
 
-        $converter    = new GDI_Gutenberg_Converter();
-        $content      = $converter->convert( $doc );
-        $content_hash = md5( $content );
-
         $existing_post_id = $this->get_post_id_by_document_id( $document_id );
+
+        $converter    = new GDI_Gutenberg_Converter();
+        $content      = $converter->convert( $doc, $existing_post_id );
+        $content_hash = md5( $content );
 
         if ( $existing_post_id ) {
             $post_id = wp_update_post(
@@ -113,9 +113,9 @@ class GDI_Importer {
         }
 
         $converter    = new GDI_Gutenberg_Converter();
-        $content      = $converter->convert( $doc );
+        $content      = $converter->convert( $doc, $post_id );
         $current_hash = md5( $content );
 
         return $current_hash !== $saved_hash;
-    }  
+    }
 }
