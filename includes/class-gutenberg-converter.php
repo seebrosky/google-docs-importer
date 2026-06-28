@@ -33,7 +33,7 @@ class GDI_Gutenberg_Converter {
 
             foreach ( $paragraph['elements'] as $element ) {
                 if ( ! empty( $element['textRun']['content'] ) ) {
-                    $text .= $element['textRun']['content'];
+                    $text .= $this->get_text_run_html( $element['textRun'] );
                 }
 
                 if ( ! empty( $element['inlineObjectElement']['inlineObjectId'] ) ) {
@@ -60,7 +60,8 @@ class GDI_Gutenberg_Converter {
                 }
             }
 
-            $text = trim( $text );
+            $text       = trim( $text );
+            $plain_text = trim( wp_strip_all_tags( $text ) );
 
             if ( $in_list && ! empty( $list_items ) && ! empty( $image_blocks ) ) {
                 $blocks .= $this->get_list_block( $list_items );
@@ -69,17 +70,17 @@ class GDI_Gutenberg_Converter {
                 $in_list    = false;
             }
 
-            if ( empty( $text ) && ! empty( $image_blocks ) ) {
+            if ( empty( $plain_text ) && ! empty( $image_blocks ) ) {
                 $blocks .= $image_blocks;
                 continue;
             }
 
-            if ( empty( $text ) ) {
+            if ( empty( $plain_text ) ) {
                 continue;
             }
 
             if ( ! empty( $paragraph['bullet'] ) ) {
-                $list_items[] = '<li>' . esc_html( $text ) . '</li>';
+                $list_items[] = '<li>' . wp_kses_post( $text ) . '</li>';
                 $in_list      = true;
 
                 if ( ! empty( $image_blocks ) ) {
@@ -109,7 +110,7 @@ class GDI_Gutenberg_Converter {
                     "<!-- wp:heading {\"level\":%d} -->\n<h%d class=\"wp-block-heading\">%s</h%d>\n<!-- /wp:heading -->\n\n",
                     $level,
                     $level,
-                    esc_html( $text ),
+                    wp_kses_post( $text ),
                     $level
                 );
 
@@ -119,7 +120,7 @@ class GDI_Gutenberg_Converter {
             }
 
             $blocks .= "<!-- wp:paragraph -->\n";
-            $blocks .= '<p>' . esc_html( $text ) . "</p>\n";
+            $blocks .= '<p>' . wp_kses_post( $text ) . "</p>\n";
             $blocks .= "<!-- /wp:paragraph -->\n\n";
 
             $blocks .= $image_blocks;
@@ -134,6 +135,27 @@ class GDI_Gutenberg_Converter {
 
     private function get_inline_image_url( array $doc, $inline_object_id ) {
         return $doc['inlineObjects'][ $inline_object_id ]['inlineObjectProperties']['embeddedObject']['imageProperties']['contentUri'] ?? '';
+    }
+
+    private function get_text_run_html( array $text_run ) {
+        $content = $text_run['content'] ?? '';
+
+        if ( '' === $content ) {
+            return '';
+        }
+
+        $content = esc_html( $content );
+        $url     = $text_run['textStyle']['link']['url'] ?? '';
+
+        if ( ! empty( $url ) ) {
+            return sprintf(
+                '<a href="%s">%s</a>',
+                esc_url( $url ),
+                $content
+            );
+        }
+
+        return $content;
     }
 
     private function get_list_block( array $list_items ) {

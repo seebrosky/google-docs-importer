@@ -37,7 +37,6 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 
 Planned features include:
 
-- Import hyperlinks
 - Preserve bold, italic, underline, and inline formatting
 - Import tables as Gutenberg Table blocks
 - Scheduled document synchronization

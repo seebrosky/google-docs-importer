@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2026-06-28
+
+### Added
+- Import hyperlinks from Google Docs into native Gutenberg content.
+- Preserve inline links during document updates.
+
+### Improved
+- Refactored text processing to support future inline formatting such as bold, italic, underline, and strikethrough.
+- Replaced status dots with semantic status icons for improved accessibility and usability.
+
 ## [0.6.0] - 2026-06-27
 
 ### Added
@@ -16,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - Reuse existing media library images during document updates.
 - Improve image import reliability when Google changes inline object IDs.
 - Optimize imported images for smaller file sizes and better performance.
+- Improved admin interface consistency and button focus states.
 
 ## [0.5.0]
 
