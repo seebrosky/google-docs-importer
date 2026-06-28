@@ -23,6 +23,12 @@ class GDI_Gutenberg_Converter {
         $image_importer = new GDI_Image_Importer();
 
         foreach ( $doc['body']['content'] as $item ) {
+            // Convert Google Docs tables before paragraph handling.
+            if ( ! empty( $item['table'] ) ) {
+                $blocks .= $this->get_table_block( $item['table'] );
+                continue;
+            }
+
             if ( empty( $item['paragraph']['elements'] ) ) {
                 continue;
             }
@@ -181,6 +187,58 @@ class GDI_Gutenberg_Converter {
 
         if ( ! empty( $text_style['strikethrough'] ) ) {
             $content = '<s>' . $content . '</s>';
+        }
+
+        return $content;
+    }
+
+    private function get_table_block( array $table ) {
+        if ( empty( $table['tableRows'] ) ) {
+            return '';
+        }
+
+        $html  = "<!-- wp:table -->\n";
+        $html .= "<figure class=\"wp-block-table\"><table><tbody>\n";
+
+        foreach ( $table['tableRows'] as $row ) {
+            $html .= "<tr>\n";
+
+            foreach ( $row['tableCells'] ?? [] as $cell ) {
+                $cell_text = $this->get_table_cell_html( $cell );
+
+                $html .= '<td>' . wp_kses_post( $cell_text ) . "</td>\n";
+            }
+
+            $html .= "</tr>\n";
+        }
+
+        $html .= "</tbody></table></figure>\n";
+        $html .= "<!-- /wp:table -->\n\n";
+
+        return $html;
+    }
+
+    private function get_table_cell_html( array $cell ) {
+        $content = '';
+
+        foreach ( $cell['content'] ?? [] as $item ) {
+            if ( empty( $item['paragraph']['elements'] ) ) {
+                continue;
+            }
+
+            $text = '';
+
+            foreach ( $item['paragraph']['elements'] as $element ) {
+                if ( ! empty( $element['textRun']['content'] ) ) {
+                    $text .= $this->get_text_run_html( $element['textRun'] );
+                }
+            }
+
+            $text = trim( $text );
+
+            if ( '' !== $text ) {
+                $content .= '<p>' . wp_kses_post( $text ) . '</p>';
+            }
         }
 
         return $content;

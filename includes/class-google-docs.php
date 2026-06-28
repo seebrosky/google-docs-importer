@@ -64,6 +64,8 @@ class GDI_Google_Docs {
                             'body/content/paragraph/elements/inlineObjectElement/inlineObjectId',
                             'body/content/paragraph/paragraphStyle/namedStyleType',
                             'body/content/paragraph/bullet',
+                            'body/content/table/tableRows/tableCells/content/paragraph/elements/textRun/content',
+                            'body/content/table/tableRows/tableCells/content/paragraph/elements/textRun/textStyle',
                             'inlineObjects',
                         ]
                     ),

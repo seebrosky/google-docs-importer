@@ -7,14 +7,17 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 - Secure OAuth authentication with Google
 - Search Google Docs directly from the WordPress admin
 - Import documents as Posts or Pages
-- Convert Google Docs into native Gutenberg blocks
 - Update previously imported documents
 - Detect content changes before updating
+- Convert Google Docs into native Gutenberg blocks
+- Preserve Google Docs headings, paragraphs, bulleted lists, tables, hyperlinks, and rich text formatting
+- Preserve bold, italic, underline, and strikethrough formatting
 - Import inline images into the WordPress Media Library
-- Prevent duplicate media uploads using image IDs and SHA-256 file hashes
+- Prevent duplicate media uploads using Google image IDs and SHA-256 file hashes
 - Automatically convert imported images to WebP
 - Resize imported images to a maximum width of 2000px
 - Automatically set the first imported image as the featured image
+- Prevent duplicate hero images for Posts while preserving the first image in Pages
 - Automatically refresh expired Google access tokens
 - Native WordPress admin interface
 
@@ -37,11 +40,13 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 
 Planned features include:
 
-- Preserve bold, italic, underline, and inline formatting
-- Import tables as Gutenberg Table blocks
+- Ordered list support
+- Nested list support
+- Blockquote support
+- Horizontal rule support
+- Image captions and improved alt text support
 - Scheduled document synchronization
 - Bulk document synchronization
-- Image captions and improved alt text support
 
 ## Changelog
 
