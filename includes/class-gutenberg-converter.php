@@ -265,7 +265,8 @@ class GDI_Gutenberg_Converter {
         $html = "<tr>\n";
 
         foreach ( $row['tableCells'] ?? [] as $cell ) {
-            $cell_text = $this->get_table_cell_html( $cell );
+            $is_header = 'th' === $cell_tag;
+            $cell_text = $this->get_table_cell_html( $cell, $is_header );
 
             $html .= '<' . $cell_tag . '>' . wp_kses_post( $cell_text ) . '</' . $cell_tag . ">\n";
         }
@@ -303,7 +304,7 @@ class GDI_Gutenberg_Converter {
         return false;
     }    
 
-    private function get_table_cell_html( array $cell ) {
+    private function get_table_cell_html( array $cell, $is_header = false ) {
         $content = '';
 
         foreach ( $cell['content'] ?? [] as $item ) {
@@ -322,7 +323,9 @@ class GDI_Gutenberg_Converter {
             $text = trim( $text );
 
             if ( '' !== $text ) {
-                $content .= '<p>' . wp_kses_post( $text ) . '</p>';
+                $content .= $is_header
+                    ? wp_kses_post( $text )
+                    : '<p>' . wp_kses_post( $text ) . '</p>';
             }
         }
 
