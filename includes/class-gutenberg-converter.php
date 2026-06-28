@@ -45,6 +45,11 @@ class GDI_Gutenberg_Converter {
             $image_blocks = '';
 
             foreach ( $paragraph['elements'] as $element ) {
+                if ( ! empty( $element['horizontalRule'] ) ) {
+                    $text .= '__GDI_HORIZONTAL_RULE__';
+                    continue;
+                }
+
                 if ( ! empty( $element['textRun']['content'] ) ) {
                     $text .= $this->get_text_run_html( $element['textRun'] );
                 }
@@ -75,6 +80,22 @@ class GDI_Gutenberg_Converter {
 
             $text       = trim( $text );
             $plain_text = trim( wp_strip_all_tags( $text ) );
+
+            if ( '__GDI_HORIZONTAL_RULE__' === $plain_text ) {
+
+                if ( $in_list && ! empty( $list_items ) ) {
+                    $blocks .= $this->get_list_block( $list_items );
+
+                    $list_items = [];
+                    $in_list    = false;
+                }
+
+                $blocks .= "<!-- wp:separator -->\n";
+                $blocks .= "<hr class=\"wp-block-separator has-alpha-channel-opacity\" />\n";
+                $blocks .= "<!-- /wp:separator -->\n\n";
+
+                continue;
+            }
 
             if ( $in_list && ! empty( $list_items ) && ! empty( $image_blocks ) ) {
                 $blocks .= $this->get_list_block( $list_items );
