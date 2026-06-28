@@ -17,14 +17,21 @@ class GDI_Gutenberg_Converter {
     }
 
     private function convert_doc_to_blocks( array $doc, $post_id = 0, $skip_first_image = false ) {
-        $blocks         = '';
-        $list_items     = [];
-        $in_list        = false;
-        $image_importer = new GDI_Image_Importer();
+        $blocks           = '';
+        $list_items       = [];
+        $in_list          = false;
+        $list_definitions = $doc['lists'] ?? [];
+        $image_importer   = new GDI_Image_Importer();
 
         foreach ( $doc['body']['content'] as $item ) {
-            // Convert Google Docs tables before paragraph handling.
             if ( ! empty( $item['table'] ) ) {
+                if ( $in_list && ! empty( $list_items ) ) {
+                    $blocks .= $this->get_list_block( $list_items );
+
+                    $list_items = [];
+                    $in_list    = false;
+                }
+
                 $blocks .= $this->get_table_block( $item['table'] );
                 continue;
             }
@@ -86,8 +93,16 @@ class GDI_Gutenberg_Converter {
             }
 
             if ( ! empty( $paragraph['bullet'] ) ) {
-                $list_items[] = '<li>' . wp_kses_post( $text ) . '</li>';
-                $in_list      = true;
+                $list_level = $this->get_list_level( $paragraph );
+                $list_type  = $this->get_list_type( $paragraph, $list_definitions, $list_level );
+
+                $list_items[] = [
+                    'content' => '<li>' . wp_kses_post( $text ),
+                    'level'   => $list_level,
+                    'type'    => $list_type,
+                ];
+
+                $in_list = true;
 
                 if ( ! empty( $image_blocks ) ) {
                     $blocks .= $this->get_list_block( $list_items );
@@ -182,7 +197,7 @@ class GDI_Gutenberg_Converter {
         }
 
         if ( ! empty( $text_style['underline'] ) ) {
-            $content = '<ins>' . $content . '</ins>';
+            $content = '<u>' . $content . '</u>';
         }
 
         if ( ! empty( $text_style['strikethrough'] ) ) {
@@ -245,10 +260,91 @@ class GDI_Gutenberg_Converter {
     }
 
     private function get_list_block( array $list_items ) {
-        $block  = "<!-- wp:list -->\n";
-        $block .= "<ul>\n" . implode( "\n", $list_items ) . "\n</ul>\n";
+        if ( empty( $list_items ) ) {
+            return '';
+        }
+
+        $root_type = $list_items[0]['type'] ?? 'ul';
+        $root_type = in_array( $root_type, [ 'ul', 'ol' ], true ) ? $root_type : 'ul';
+
+        $index = 0;
+
+        $block  = '<!-- wp:list';
+        $block .= 'ol' === $root_type ? ' {"ordered":true}' : '';
+        $block .= " -->\n";
+        $block .= $this->build_nested_list_html( $list_items, $index, 0, $root_type );
         $block .= "<!-- /wp:list -->\n\n";
 
         return $block;
+    }
+
+    private function build_nested_list_html( array $list_items, &$index, $level, $list_type ) {
+        $list_type = in_array( $list_type, [ 'ul', 'ol' ], true ) ? $list_type : 'ul';
+
+        $html = '<' . $list_type . ">\n";
+
+        while ( $index < count( $list_items ) ) {
+            $item_level = (int) ( $list_items[ $index ]['level'] ?? 0 );
+
+            if ( $item_level < $level ) {
+                break;
+            }
+
+            if ( $item_level > $level ) {
+                break;
+            }
+
+            $content = $list_items[ $index ]['content'] ?? '<li>';
+            $html   .= $content;
+
+            $index++;
+
+            while ( $index < count( $list_items ) && (int) ( $list_items[ $index ]['level'] ?? 0 ) > $level ) {
+                $child_level = (int) ( $list_items[ $index ]['level'] ?? 0 );
+                $child_type  = $list_items[ $index ]['type'] ?? 'ul';
+
+                $html .= "\n" . $this->build_nested_list_html( $list_items, $index, $child_level, $child_type );
+            }
+
+            $html .= "</li>\n";
+        }
+
+        $html .= '</' . $list_type . ">\n";
+
+        return $html;
+    }
+
+    private function get_list_level( array $paragraph ) {
+        return isset( $paragraph['bullet']['nestingLevel'] )
+            ? absint( $paragraph['bullet']['nestingLevel'] )
+            : 0;
+    }
+
+    private function get_list_type( array $paragraph, array $list_definitions, $level = 0 ) {
+        $list_id = $paragraph['bullet']['listId'] ?? '';
+
+        if ( empty( $list_id ) || empty( $list_definitions[ $list_id ] ) ) {
+            return 'ul';
+        }
+
+        $nesting_levels = $list_definitions[ $list_id ]['listProperties']['nestingLevels'] ?? [];
+        $glyph          = $nesting_levels[ $level ]['glyphType'] ?? '';
+
+        $ordered_glyphs = [
+            'DECIMAL',
+            'ZERO_DECIMAL',
+            'UPPER_ALPHA',
+            'LOWER_ALPHA',
+            'UPPER_ROMAN',
+            'LOWER_ROMAN',
+        ];
+
+        if ( in_array( $glyph, $ordered_glyphs, true ) ) {
+            return 'ol';
+        }
+
+        $parent_glyph = $nesting_levels[0]['glyphType'] ?? '';
+
+        return in_array( $parent_glyph, $ordered_glyphs, true ) ? 'ol' : 'ul';
     }
 }
