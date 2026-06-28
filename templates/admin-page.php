@@ -119,7 +119,7 @@ defined( 'ABSPATH' ) || exit;
             <?php if ( ! empty( $search_results ) ) : ?>
                 <h3>Results</h3>
 
-                <table class="widefat striped">
+                <table class="widefat striped gdi-results-table">
                     <thead>
                         <tr>
                             <th>Document Title</th>
