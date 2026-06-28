@@ -1,3 +1,12 @@
+## [1.1.0] - 2026-06-28
+
+### Added
+- Import Google Docs horizontal rules as native Gutenberg Separator blocks.
+
+### Improved
+- Standardized imported horizontal rules to match the active theme's design system.
+- Improved content fidelity for documents containing visual section dividers.
+
 ## [1.0.0] - 2026-06-28
 
 ### Added
