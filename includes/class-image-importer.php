@@ -7,6 +7,7 @@ class GDI_Image_Importer {
     const IMAGE_KEY_META_KEY        = '_gdi_google_image_key';
     const IMAGE_HASH_META_KEY       = '_gdi_google_image_hash';
     const IMAGE_SOURCE_URL_META_KEY = '_gdi_google_image_source_url';
+    const IMAGE_FILE_HASH_META_KEY  = '_gdi_google_image_file_hash';
 
     public function import_from_url( $image_url, $post_id = 0, $image_id = '' ) {
         if ( empty( $image_url ) ) {
@@ -33,6 +34,21 @@ class GDI_Image_Importer {
             return $tmp;
         }
 
+        $file_hash = file_exists( $tmp ) ? hash_file( 'sha256', $tmp ) : '';
+
+        $existing_attachment_id = $this->get_attachment_id_by_file_hash( $file_hash );
+
+        if ( $existing_attachment_id ) {
+            update_post_meta( $existing_attachment_id, self::IMAGE_KEY_META_KEY, $image_key );
+            update_post_meta( $existing_attachment_id, self::IMAGE_HASH_META_KEY, $image_hash );
+            update_post_meta( $existing_attachment_id, self::IMAGE_FILE_HASH_META_KEY, $file_hash );
+            update_post_meta( $existing_attachment_id, self::IMAGE_SOURCE_URL_META_KEY, $image_url );
+
+            @unlink( $tmp );
+
+            return $existing_attachment_id;
+        }
+
         $file_array = [
             'name'     => $this->get_filename(),
             'tmp_name' => $tmp,
@@ -53,6 +69,7 @@ class GDI_Image_Importer {
 
         update_post_meta( $attachment_id, self::IMAGE_KEY_META_KEY, $image_key );
         update_post_meta( $attachment_id, self::IMAGE_HASH_META_KEY, $image_hash );
+        update_post_meta( $attachment_id, self::IMAGE_FILE_HASH_META_KEY, $file_hash );
         update_post_meta( $attachment_id, self::IMAGE_SOURCE_URL_META_KEY, $image_url );
 
         return absint( $attachment_id );
@@ -161,6 +178,29 @@ class GDI_Image_Importer {
                     [
                         'key'   => self::IMAGE_KEY_META_KEY,
                         'value' => sanitize_text_field( $image_key ),
+                    ],
+                ],
+            ]
+        );
+
+        return ! empty( $query->posts ) ? absint( $query->posts[0] ) : 0;
+    }
+
+    private function get_attachment_id_by_file_hash( $file_hash ) {
+        if ( empty( $file_hash ) ) {
+            return 0;
+        }
+
+        $query = new WP_Query(
+            [
+                'post_type'      => 'attachment',
+                'post_status'    => 'inherit',
+                'posts_per_page' => 1,
+                'fields'         => 'ids',
+                'meta_query'     => [
+                    [
+                        'key'   => self::IMAGE_FILE_HASH_META_KEY,
+                        'value' => sanitize_text_field( $file_hash ),
                     ],
                 ],
             ]

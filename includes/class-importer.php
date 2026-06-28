@@ -18,8 +18,18 @@ class GDI_Importer {
 
         $existing_post_id = $this->get_post_id_by_document_id( $document_id );
 
+        /*
+         * Posts use the featured image in the hero, so skip the first
+         * inline image in the content. Pages keep the first image.
+         */
+        $import_post_type = $existing_post_id
+            ? get_post_type( $existing_post_id )
+            : $post_type;
+
+        $skip_first_image = 'post' === $import_post_type;
+
         $converter         = new GDI_Gutenberg_Converter();
-        $content           = $converter->convert( $doc, $existing_post_id );
+        $content           = $converter->convert( $doc, $existing_post_id, $skip_first_image );
         $content_hash      = md5( $content );
         $featured_image_id = $converter->get_first_image_id();
 
@@ -117,8 +127,11 @@ class GDI_Importer {
             return false;
         }
 
+        $import_post_type = get_post_type( $post_id );
+        $skip_first_image = 'post' === $import_post_type;
+
         $converter    = new GDI_Gutenberg_Converter();
-        $content      = $converter->convert( $doc, $post_id );
+        $content      = $converter->convert( $doc, $post_id, $skip_first_image );
         $current_hash = md5( $content );
 
         return $current_hash !== $saved_hash;

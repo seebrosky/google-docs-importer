@@ -6,17 +6,17 @@ class GDI_Gutenberg_Converter {
 
     private $first_image_id = 0;
 
-    public function convert( array $doc, $post_id = 0 ) {
+    public function convert( array $doc, $post_id = 0, $skip_first_image = false ) {
         $this->first_image_id = 0;
 
-        return $this->convert_doc_to_blocks( $doc, $post_id );
+        return $this->convert_doc_to_blocks( $doc, $post_id, $skip_first_image );
     }
 
     public function get_first_image_id() {
         return absint( $this->first_image_id );
     }
 
-    private function convert_doc_to_blocks( array $doc, $post_id = 0 ) {
+    private function convert_doc_to_blocks( array $doc, $post_id = 0, $skip_first_image = false ) {
         $blocks         = '';
         $list_items     = [];
         $in_list        = false;
@@ -44,8 +44,14 @@ class GDI_Gutenberg_Converter {
                         $attachment_id = $image_importer->import_from_url( $image_url, $post_id, $inline_object_id );
 
                         if ( ! is_wp_error( $attachment_id ) ) {
-                            if ( empty( $this->first_image_id ) ) {
+                            $is_first_image = empty( $this->first_image_id );
+
+                            if ( $is_first_image ) {
                                 $this->first_image_id = absint( $attachment_id );
+                            }
+
+                            if ( $is_first_image && $skip_first_image ) {
+                                continue;
                             }
 
                             $image_blocks .= $image_importer->get_image_block( $attachment_id );
