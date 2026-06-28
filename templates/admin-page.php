@@ -173,11 +173,28 @@ defined( 'ABSPATH' ) || exit;
 
                                 <td>
                                     <?php if ( $update_available ) : ?>
-                                        <span class="gdi-status-update">● Update Available</span>
+                                        <span class="gdi-status-update">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                            </svg>
+                                            Update Available
+                                        </span>
                                     <?php elseif ( $existing_post_id ) : ?>
-                                        <span class="gdi-status-imported">✓ Up to Date</span>
+                                        <span class="gdi-status-imported">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                            </svg>                                            
+                                            Up to Date
+                                        </span>
                                     <?php else : ?>
-                                        <span class="gdi-status-new">● Ready to Import</span>
+                                        <span class="gdi-status gdi-status-ready">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M12 9.75v6.75m0 0-3-3m3 3 3-3m-8.25 6a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+                                            </svg>
+                                            Ready to Import
+                                        </span>
                                     <?php endif; ?>
                                 </td>
 

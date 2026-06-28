@@ -48,10 +48,22 @@
 }
 
 .gdi-button-danger:hover,
-.gdi-button-danger:focus {
+.gdi-button-danger:focus,
+.gdi-button-danger:focus-visible {
     background: #b32d2e !important;
     border-color: #b32d2e !important;
     color: #fff !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.wp-core-ui .gdi-actions .button:focus,
+.wp-core-ui .gdi-actions .button:focus-visible {
+    background: #2b32de;
+    border-color: #2b32de;
+    color: #fff;
+    box-shadow: none;
+    outline: none;
 }
 
 /**
@@ -74,19 +86,37 @@
     vertical-align: middle;
 }
 
-.gdi-status-imported {
-    color: #008a20;
+.gdi-status-imported,
+.gdi-status-ready,
+.gdi-status-update {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-weight: 600;
 }
 
+.gdi-status-imported {
+    color: #008a20;
+}
+
+.gdi-status-ready,
 .gdi-status-new {
     color: #2271b1;
-    font-weight: 600;
 }
 
 .gdi-status-update {
     color: #b26200;
-    font-weight: 600;
+}
+
+.gdi-status-imported svg,
+.gdi-status-ready svg,
+.gdi-status-update svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    position: relative;
+    top: -1px;
 }
 
 /**
