@@ -105,6 +105,12 @@ class GDI_Image_Importer {
 
         $editor->set_quality( 82 );
 
+        $size = $editor->get_size();
+
+        if ( ! empty( $size['width'] ) && (int) $size['width'] > 2000 ) {
+            $editor->resize( 2000, null, false );
+        }
+
         $webp_path = preg_replace( '/\.(jpe?g|png)$/i', '.webp', $file_path );
 
         if ( empty( $webp_path ) || $webp_path === $file_path ) {

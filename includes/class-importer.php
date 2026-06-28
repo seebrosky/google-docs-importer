@@ -18,9 +18,10 @@ class GDI_Importer {
 
         $existing_post_id = $this->get_post_id_by_document_id( $document_id );
 
-        $converter    = new GDI_Gutenberg_Converter();
-        $content      = $converter->convert( $doc, $existing_post_id );
-        $content_hash = md5( $content );
+        $converter         = new GDI_Gutenberg_Converter();
+        $content           = $converter->convert( $doc, $existing_post_id );
+        $content_hash      = md5( $content );
+        $featured_image_id = $converter->get_first_image_id();
 
         if ( $existing_post_id ) {
             $post_id = wp_update_post(
@@ -35,6 +36,8 @@ class GDI_Importer {
             if ( is_wp_error( $post_id ) ) {
                 return $post_id;
             }
+
+            $this->maybe_set_featured_image( $post_id, $featured_image_id );
 
             update_post_meta( $post_id, self::LAST_IMPORTED_META_KEY, time() );
             update_post_meta( $post_id, self::CONTENT_HASH_META_KEY, $content_hash );
@@ -60,6 +63,8 @@ class GDI_Importer {
         if ( is_wp_error( $post_id ) ) {
             return $post_id;
         }
+
+        $this->maybe_set_featured_image( $post_id, $featured_image_id );
 
         update_post_meta( $post_id, self::GOOGLE_DOC_ID_META_KEY, sanitize_text_field( $document_id ) );
         update_post_meta( $post_id, self::LAST_IMPORTED_META_KEY, time() );
@@ -117,5 +122,17 @@ class GDI_Importer {
         $current_hash = md5( $content );
 
         return $current_hash !== $saved_hash;
+    }
+
+    private function maybe_set_featured_image( $post_id, $attachment_id ) {
+        if ( empty( $post_id ) || empty( $attachment_id ) ) {
+            return;
+        }
+
+        if ( has_post_thumbnail( $post_id ) ) {
+            return;
+        }
+
+        set_post_thumbnail( $post_id, $attachment_id );
     }
 }

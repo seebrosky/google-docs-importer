@@ -4,8 +4,16 @@ defined( 'ABSPATH' ) || exit;
 
 class GDI_Gutenberg_Converter {
 
+    private $first_image_id = 0;
+
     public function convert( array $doc, $post_id = 0 ) {
+        $this->first_image_id = 0;
+
         return $this->convert_doc_to_blocks( $doc, $post_id );
+    }
+
+    public function get_first_image_id() {
+        return absint( $this->first_image_id );
     }
 
     private function convert_doc_to_blocks( array $doc, $post_id = 0 ) {
@@ -36,6 +44,10 @@ class GDI_Gutenberg_Converter {
                         $attachment_id = $image_importer->import_from_url( $image_url, $post_id, $inline_object_id );
 
                         if ( ! is_wp_error( $attachment_id ) ) {
+                            if ( empty( $this->first_image_id ) ) {
+                                $this->first_image_id = absint( $attachment_id );
+                            }
+
                             $image_blocks .= $image_importer->get_image_block( $attachment_id );
                         }
                     }
