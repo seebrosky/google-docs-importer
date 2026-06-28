@@ -53,9 +53,25 @@ class GDI_Google_Docs {
         }
 
         $response = wp_remote_get(
-            sprintf(
-                'https://docs.googleapis.com/v1/documents/%s',
-                rawurlencode( $document_id )
+            add_query_arg(
+                [
+                    'fields' => implode(
+                        ',',
+                        [
+                            'title',
+                            'body/content/paragraph/elements/textRun/content',
+                            'body/content/paragraph/elements/textRun/textStyle',
+                            'body/content/paragraph/elements/inlineObjectElement/inlineObjectId',
+                            'body/content/paragraph/paragraphStyle/namedStyleType',
+                            'body/content/paragraph/bullet',
+                            'inlineObjects',
+                        ]
+                    ),
+                ],
+                sprintf(
+                    'https://docs.googleapis.com/v1/documents/%s',
+                    rawurlencode( $document_id )
+                )
             ),
             [
                 'headers' => [

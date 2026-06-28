@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.0] - 2026-06-28
+
+### Added
+- Preserve rich text formatting from Google Docs, including bold, italic, underline, and strikethrough.
+- Import inline hyperlinks as native Gutenberg links.
+
+### Improved
+- Refactored inline text processing to support extensible text formatting.
+- Added support for Google Docs `textStyle` metadata during document imports.
+- Improved content fidelity so imported documents more closely match their Google Docs source.
+
 ## [0.7.0] - 2026-06-28
 
 ### Added
@@ -9,8 +20,8 @@ All notable changes to this project will be documented in this file.
 - Preserve inline links during document updates.
 
 ### Improved
-- Refactored text processing to support future inline formatting such as bold, italic, underline, and strikethrough.
 - Replaced status dots with semantic status icons for improved accessibility and usability.
+- Improved admin interface consistency and button focus states.
 
 ## [0.6.0] - 2026-06-27
 
@@ -26,7 +37,6 @@ All notable changes to this project will be documented in this file.
 - Reuse existing media library images during document updates.
 - Improve image import reliability when Google changes inline object IDs.
 - Optimize imported images for smaller file sizes and better performance.
-- Improved admin interface consistency and button focus states.
 
 ## [0.5.0]
 

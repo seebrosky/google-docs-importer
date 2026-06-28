@@ -144,8 +144,12 @@ class GDI_Gutenberg_Converter {
             return '';
         }
 
-        $content = esc_html( $content );
-        $url     = $text_run['textStyle']['link']['url'] ?? '';
+        $content    = esc_html( $content );
+        $text_style = $text_run['textStyle'] ?? [];
+
+        $content = $this->apply_text_styles( $content, $text_style );
+
+        $url = $text_style['link']['url'] ?? '';
 
         if ( ! empty( $url ) ) {
             return sprintf(
@@ -153,6 +157,30 @@ class GDI_Gutenberg_Converter {
                 esc_url( $url ),
                 $content
             );
+        }
+
+        return $content;
+    }
+
+    private function apply_text_styles( $content, array $text_style ) {
+        if ( '' === $content ) {
+            return '';
+        }
+
+        if ( ! empty( $text_style['bold'] ) ) {
+            $content = '<strong>' . $content . '</strong>';
+        }
+
+        if ( ! empty( $text_style['italic'] ) ) {
+            $content = '<em>' . $content . '</em>';
+        }
+
+        if ( ! empty( $text_style['underline'] ) ) {
+            $content = '<ins>' . $content . '</ins>';
+        }
+
+        if ( ! empty( $text_style['strikethrough'] ) ) {
+            $content = '<s>' . $content . '</s>';
         }
 
         return $content;
