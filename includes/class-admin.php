@@ -31,6 +31,14 @@ class GDI_Admin {
             [],
             GDI_VERSION
         );
+
+        wp_enqueue_script(
+            'gdi-admin-table-sort',
+            GDI_URL . 'assets/js/admin-table-sort.js',
+            [],
+            GDI_VERSION,
+            true
+        );        
     }    
 
     public function register_menu() {

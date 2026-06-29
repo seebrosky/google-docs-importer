@@ -19,7 +19,7 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 - Automatically set the first imported image as the featured image
 - Prevent duplicate hero images for Posts while preserving the first image in Pages
 - Automatically refresh expired Google access tokens
-- Native WordPress admin interface
+- Native WordPress admin interface with sortable search results
 
 ## Requirements
 

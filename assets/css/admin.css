@@ -134,6 +134,61 @@
     outline: none !important;
 }
 
+.gdi-sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gdi-sort-button:hover,
+.gdi-sort-button:focus-visible {
+    color: #1a73e8;
+}
+
+.gdi-sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.gdi-sort-icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+.gdi-sort-icon svg {
+    width: 15px;
+    height: 15px;
+}
+
+.gdi-sort-icon--active {
+    display: none;
+}
+
+.gdi-sort-button[data-order] .gdi-sort-icon--default {
+    display: none;
+}
+
+.gdi-sort-button[data-order] .gdi-sort-icon--active {
+    display: inline-flex;
+}
+
+.gdi-sort-button[data-order="desc"] .gdi-sort-icon--active svg {
+    transform: rotate(180deg);
+}
+
 /**
  * --------------------------------------------------------------------------
  * Status Indicators

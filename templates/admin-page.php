@@ -2,6 +2,18 @@
 
 defined( 'ABSPATH' ) || exit;
 
+$sort_icons = <<<HTML
+<span class="gdi-sort-icon gdi-sort-icon--default" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"/>
+    </svg>
+</span>
+<span class="gdi-sort-icon gdi-sort-icon--active" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"/>
+    </svg>
+</span>
+HTML;
 ?>
 
 <div class="wrap">
@@ -122,10 +134,30 @@ defined( 'ABSPATH' ) || exit;
                 <table class="widefat striped gdi-results-table">
                     <thead>
                         <tr>
-                            <th>Document Title</th>
-                            <th>Modified</th>
-                            <th>Status</th>
-                            <th>Type</th>
+                            <th>
+                            <button type="button" class="gdi-sort-button" data-sort="text">
+                                Document Title
+                                <?php echo $sort_icons; ?>
+                            </button>
+                            </th>
+                            <th>
+                                <button type="button" class="gdi-sort-button" data-sort="date">
+                                    Modified
+                                    <?php echo $sort_icons; ?>                                 
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="gdi-sort-button" data-sort="text">
+                                    Status
+                                    <?php echo $sort_icons; ?>                                 
+                                </button>
+                            </th>
+                            <th>
+                                <button type="button" class="gdi-sort-button" data-sort="text">
+                                    Type
+                                    <?php echo $sort_icons; ?>                                   
+                                </button>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </thead>
