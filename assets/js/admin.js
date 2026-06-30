@@ -52,4 +52,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return order === 'asc' ? result : -result;
     }
+
+    // Show category selector only when importing as a Post.
+    document.querySelectorAll('[name="gdi_post_type"]').forEach((typeSelect) => {
+        const row = typeSelect.closest('td');
+        const categoryField = row ? row.querySelector('.gdi-category-field') : null;
+
+        if (!categoryField) {
+            return;
+        }
+
+        function toggleCategory() {
+            categoryField.style.display = typeSelect.value === 'post' ? '' : 'none';
+        }
+
+        typeSelect.addEventListener('change', toggleCategory);
+        toggleCategory();
+    });  
 });

@@ -14,6 +14,19 @@ $sort_icons = <<<HTML
     </svg>
 </span>
 HTML;
+
+$categories = get_categories(
+    [
+        'hide_empty' => false,
+        'orderby'    => 'name',
+        'order'      => 'ASC',
+    ]
+);
+
+$selected_category = isset( $_POST['gdi_category_id'] )
+    ? absint( $_POST['gdi_category_id'] )
+    : 0;
+
 ?>
 
 <div class="wrap">
@@ -237,14 +250,38 @@ HTML;
                                             Import as
                                         </label>
 
-                                        <select
-                                            id="gdi_post_type_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
-                                            name="gdi_post_type"
-                                            form="gdi_import_form_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
-                                        >
-                                            <option value="post">Post</option>
-                                            <option value="page">Page</option>
-                                        </select>
+                                        <div class="gdi-import-options">
+
+                                            <select
+                                                id="gdi_post_type_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
+                                                name="gdi_post_type"
+                                                form="gdi_import_form_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
+                                            >
+                                                <option value="post">Post</option>
+                                                <option value="page">Page</option>
+                                            </select>
+
+                                            <div class="gdi-category-field">
+                                                <select
+                                                    name="gdi_category_id"
+                                                    class="gdi-category-select"
+                                                    form="gdi_import_form_<?php echo esc_attr( $doc['id'] ?? '' ); ?>"
+                                                >
+                                                    <option value="">Select Category</option>
+
+                                                    <?php foreach ( $categories as $category ) : ?>
+                                                        <option
+                                                            value="<?php echo esc_attr( $category->term_id ); ?>"
+                                                            <?php selected( $selected_category, $category->term_id ); ?>
+                                                        >
+                                                            <?php echo esc_html( $category->name ); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+
+                                                </select>
+                                            </div>
+
+                                        </div>                                    
 
                                     <?php else : ?>
 

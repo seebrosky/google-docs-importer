@@ -34,7 +34,7 @@ class GDI_Admin {
 
         wp_enqueue_script(
             'gdi-admin-table-sort',
-            GDI_URL . 'assets/js/admin-table-sort.js',
+            GDI_URL . 'assets/js/admin.js',
             [],
             GDI_VERSION,
             true
@@ -100,9 +100,11 @@ class GDI_Admin {
                 ? sanitize_key( wp_unslash( $_POST['gdi_post_type'] ) )
                 : 'post';
 
-            $post_type = in_array( $post_type, [ 'post', 'page' ], true ) ? $post_type : 'post';
-            $importer  = new GDI_Importer();
-            $result    = $importer->import( $document_id, $post_type );
+            $post_type   = in_array( $post_type, [ 'post', 'page' ], true ) ? $post_type : 'post';
+            $category_id = isset( $_POST['gdi_category_id'] ) ? absint( $_POST['gdi_category_id'] ) : 0;
+
+            $importer = new GDI_Importer();
+            $result   = $importer->import( $document_id, $post_type, $category_id );
 
             if ( is_wp_error( $result ) ) {
                 wp_safe_redirect(

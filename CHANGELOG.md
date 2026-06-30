@@ -1,3 +1,15 @@
+## [1.3.0] - 2026-06-29
+
+### Added
+- Select a WordPress category when importing new Posts from Google Docs.
+- Display all available WordPress categories in the import workflow.
+
+### Improved
+- Automatically assign the selected category during new Post imports and existing Post updates.
+- Show the category selector only when importing as a Post.
+- Refined the admin import interface with improved form layout and styling.
+- Renamed the admin JavaScript bundle to better reflect its expanded functionality.
+
 ## [1.2.0] - 2026-06-28
 
 ### Added

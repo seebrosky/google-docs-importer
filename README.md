@@ -7,6 +7,7 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 - Secure OAuth authentication with Google
 - Search Google Docs directly from the WordPress admin
 - Import documents as Posts or Pages
+- Select a WordPress category when importing Posts
 - Update previously imported documents
 - Detect content changes before updating
 - Convert Google Docs into native Gutenberg blocks
@@ -35,6 +36,13 @@ Import Google Docs directly into WordPress as native Gutenberg blocks.
 5. Enter your Client ID and Client Secret in the plugin settings.
 6. Connect your Google account.
 7. Search for a Google Doc and import it into WordPress.
+
+## Usage
+
+1. Search for a Google Doc by title.
+2. Choose whether to import it as a Post or Page.
+3. If importing as a Post, optionally select a WordPress category.
+4. Click **Import** to create a new draft or **Update** to synchronize an existing import.
 
 ## Roadmap
 
